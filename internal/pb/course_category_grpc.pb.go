@@ -27,6 +27,7 @@ type CategoryServiceClient interface {
 	CreateCategoryStreamBidirectional(ctx context.Context, opts ...grpc.CallOption) (CategoryService_CreateCategoryStreamBidirectionalClient, error)
 	ListCategories(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*CategoryList, error)
 	GetCategory(ctx context.Context, in *GetCategoryRequest, opts ...grpc.CallOption) (*Category, error)
+	GetCategoryByCourseId(ctx context.Context, in *GetCategoryByCouseIdRequest, opts ...grpc.CallOption) (*Category, error)
 }
 
 type categoryServiceClient struct {
@@ -129,6 +130,15 @@ func (c *categoryServiceClient) GetCategory(ctx context.Context, in *GetCategory
 	return out, nil
 }
 
+func (c *categoryServiceClient) GetCategoryByCourseId(ctx context.Context, in *GetCategoryByCouseIdRequest, opts ...grpc.CallOption) (*Category, error) {
+	out := new(Category)
+	err := c.cc.Invoke(ctx, "/pb.CategoryService/GetCategoryByCourseId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CategoryServiceServer is the server API for CategoryService service.
 // All implementations must embed UnimplementedCategoryServiceServer
 // for forward compatibility
@@ -138,6 +148,7 @@ type CategoryServiceServer interface {
 	CreateCategoryStreamBidirectional(CategoryService_CreateCategoryStreamBidirectionalServer) error
 	ListCategories(context.Context, *Blank) (*CategoryList, error)
 	GetCategory(context.Context, *GetCategoryRequest) (*Category, error)
+	GetCategoryByCourseId(context.Context, *GetCategoryByCouseIdRequest) (*Category, error)
 	mustEmbedUnimplementedCategoryServiceServer()
 }
 
@@ -159,6 +170,9 @@ func (UnimplementedCategoryServiceServer) ListCategories(context.Context, *Blank
 }
 func (UnimplementedCategoryServiceServer) GetCategory(context.Context, *GetCategoryRequest) (*Category, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCategory not implemented")
+}
+func (UnimplementedCategoryServiceServer) GetCategoryByCourseId(context.Context, *GetCategoryByCouseIdRequest) (*Category, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCategoryByCourseId not implemented")
 }
 func (UnimplementedCategoryServiceServer) mustEmbedUnimplementedCategoryServiceServer() {}
 
@@ -279,6 +293,24 @@ func _CategoryService_GetCategory_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CategoryService_GetCategoryByCourseId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCategoryByCouseIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CategoryServiceServer).GetCategoryByCourseId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CategoryService/GetCategoryByCourseId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CategoryServiceServer).GetCategoryByCourseId(ctx, req.(*GetCategoryByCouseIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CategoryService_ServiceDesc is the grpc.ServiceDesc for CategoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -298,6 +330,10 @@ var CategoryService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetCategory",
 			Handler:    _CategoryService_GetCategory_Handler,
 		},
+		{
+			MethodName: "GetCategoryByCourseId",
+			Handler:    _CategoryService_GetCategoryByCourseId_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
@@ -312,5 +348,199 @@ var CategoryService_ServiceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 	},
+	Metadata: "proto/course_category.proto",
+}
+
+// CourseServiceClient is the client API for CourseService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type CourseServiceClient interface {
+	CreateCourse(ctx context.Context, in *CreateCourseRequest, opts ...grpc.CallOption) (*Course, error)
+	ListCourses(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*CourseList, error)
+	GetCourse(ctx context.Context, in *GetCourseRequest, opts ...grpc.CallOption) (*Course, error)
+	GetCoursesByCategoryId(ctx context.Context, in *GetCoursesByCategoryIdRequest, opts ...grpc.CallOption) (*CourseList, error)
+}
+
+type courseServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewCourseServiceClient(cc grpc.ClientConnInterface) CourseServiceClient {
+	return &courseServiceClient{cc}
+}
+
+func (c *courseServiceClient) CreateCourse(ctx context.Context, in *CreateCourseRequest, opts ...grpc.CallOption) (*Course, error) {
+	out := new(Course)
+	err := c.cc.Invoke(ctx, "/pb.CourseService/CreateCourse", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *courseServiceClient) ListCourses(ctx context.Context, in *Blank, opts ...grpc.CallOption) (*CourseList, error) {
+	out := new(CourseList)
+	err := c.cc.Invoke(ctx, "/pb.CourseService/ListCourses", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *courseServiceClient) GetCourse(ctx context.Context, in *GetCourseRequest, opts ...grpc.CallOption) (*Course, error) {
+	out := new(Course)
+	err := c.cc.Invoke(ctx, "/pb.CourseService/GetCourse", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *courseServiceClient) GetCoursesByCategoryId(ctx context.Context, in *GetCoursesByCategoryIdRequest, opts ...grpc.CallOption) (*CourseList, error) {
+	out := new(CourseList)
+	err := c.cc.Invoke(ctx, "/pb.CourseService/GetCoursesByCategoryId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CourseServiceServer is the server API for CourseService service.
+// All implementations must embed UnimplementedCourseServiceServer
+// for forward compatibility
+type CourseServiceServer interface {
+	CreateCourse(context.Context, *CreateCourseRequest) (*Course, error)
+	ListCourses(context.Context, *Blank) (*CourseList, error)
+	GetCourse(context.Context, *GetCourseRequest) (*Course, error)
+	GetCoursesByCategoryId(context.Context, *GetCoursesByCategoryIdRequest) (*CourseList, error)
+	mustEmbedUnimplementedCourseServiceServer()
+}
+
+// UnimplementedCourseServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedCourseServiceServer struct {
+}
+
+func (UnimplementedCourseServiceServer) CreateCourse(context.Context, *CreateCourseRequest) (*Course, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCourse not implemented")
+}
+func (UnimplementedCourseServiceServer) ListCourses(context.Context, *Blank) (*CourseList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCourses not implemented")
+}
+func (UnimplementedCourseServiceServer) GetCourse(context.Context, *GetCourseRequest) (*Course, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCourse not implemented")
+}
+func (UnimplementedCourseServiceServer) GetCoursesByCategoryId(context.Context, *GetCoursesByCategoryIdRequest) (*CourseList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCoursesByCategoryId not implemented")
+}
+func (UnimplementedCourseServiceServer) mustEmbedUnimplementedCourseServiceServer() {}
+
+// UnsafeCourseServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CourseServiceServer will
+// result in compilation errors.
+type UnsafeCourseServiceServer interface {
+	mustEmbedUnimplementedCourseServiceServer()
+}
+
+func RegisterCourseServiceServer(s grpc.ServiceRegistrar, srv CourseServiceServer) {
+	s.RegisterService(&CourseService_ServiceDesc, srv)
+}
+
+func _CourseService_CreateCourse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCourseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourseServiceServer).CreateCourse(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CourseService/CreateCourse",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourseServiceServer).CreateCourse(ctx, req.(*CreateCourseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CourseService_ListCourses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Blank)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourseServiceServer).ListCourses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CourseService/ListCourses",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourseServiceServer).ListCourses(ctx, req.(*Blank))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CourseService_GetCourse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCourseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourseServiceServer).GetCourse(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CourseService/GetCourse",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourseServiceServer).GetCourse(ctx, req.(*GetCourseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CourseService_GetCoursesByCategoryId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCoursesByCategoryIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourseServiceServer).GetCoursesByCategoryId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CourseService/GetCoursesByCategoryId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourseServiceServer).GetCoursesByCategoryId(ctx, req.(*GetCoursesByCategoryIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// CourseService_ServiceDesc is the grpc.ServiceDesc for CourseService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var CourseService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.CourseService",
+	HandlerType: (*CourseServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateCourse",
+			Handler:    _CourseService_CreateCourse_Handler,
+		},
+		{
+			MethodName: "ListCourses",
+			Handler:    _CourseService_ListCourses_Handler,
+		},
+		{
+			MethodName: "GetCourse",
+			Handler:    _CourseService_GetCourse_Handler,
+		},
+		{
+			MethodName: "GetCoursesByCategoryId",
+			Handler:    _CourseService_GetCoursesByCategoryId_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/course_category.proto",
 }

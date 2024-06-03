@@ -25,8 +25,13 @@ func main() {
 	categoryDb := database.NewCategory(db)
 	categoryService := service.NewCategoryService(*categoryDb)
 
+	courseDb := database.NewCourse(db)
+	courseService := service.NewCourseService(*courseDb)
+
 	grpcServer := grpc.NewServer()
 	pb.RegisterCategoryServiceServer(grpcServer, categoryService)
+	pb.RegisterCourseServiceServer(grpcServer, courseService)
+
 	reflection.Register(grpcServer)
 
 	lis, err := net.Listen("tcp", ":50051")

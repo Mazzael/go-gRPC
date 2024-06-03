@@ -4,10 +4,18 @@ option go_package = "internal/pb";
 
 message blank {}
 
+message Course {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string categoryId = 4;
+}
+
 message Category {
     string id = 1;
     string name = 2;
     string description = 3;
+    repeated Course courses = 4;
 }
 
 message CreateCategoryRequest {
@@ -23,10 +31,40 @@ message GetCategoryRequest {
     string id = 1;
 }
 
+message GetCategoryByCouseIdRequest {
+    string courseId = 1;
+}
+
 service CategoryService {
     rpc CreateCategory(CreateCategoryRequest) returns (Category) {}
     rpc CreateCategoryStream(stream CreateCategoryRequest) returns (CategoryList) {}
     rpc CreateCategoryStreamBidirectional(stream CreateCategoryRequest) returns (stream Category) {}
     rpc ListCategories(blank) returns (CategoryList) {}
     rpc GetCategory(GetCategoryRequest) returns (Category) {}
+    rpc GetCategoryByCourseId(GetCategoryByCouseIdRequest) returns (Category) {}
+}
+
+message CreateCourseRequest {
+    string name = 1;
+    string description = 2;
+    string categoryId = 3;
+}
+
+message CourseList {
+    repeated Course courses = 1;
+}
+
+message GetCourseRequest {
+    string id = 1;
+}
+
+message GetCoursesByCategoryIdRequest {
+    string categoryId = 1;
+}
+
+service CourseService {
+    rpc CreateCourse(CreateCourseRequest) returns (Course) {}
+    rpc ListCourses(blank) returns (CourseList) {}
+    rpc GetCourse(GetCourseRequest) returns (Course) {}
+    rpc GetCoursesByCategoryId(GetCoursesByCategoryIdRequest) returns (CourseList) {}
 }

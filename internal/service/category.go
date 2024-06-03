@@ -73,6 +73,20 @@ func (c *CategoryService) GetCategory(ctx context.Context, in *pb.GetCategoryReq
 	}, nil
 }
 
+func (c *CategoryService) GetCategoryByCourseId(ctx context.Context, in *pb.GetCategoryByCouseIdRequest) (*pb.Category, error) {
+	category, err := c.CategoryDB.FindByCourseId(in.CourseId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Category{
+		Id:          category.ID,
+		Name:        category.Name,
+		Description: category.Description,
+	}, nil
+}
+
 func (c *CategoryService) CreateCategoryStream(stream pb.CategoryService_CreateCategoryStreamServer) error {
 	categories := &pb.CategoryList{}
 
